@@ -1,4 +1,4 @@
-# MOL Generator #
+# Mol Generator #
 Personal application software to understand material structure in depth.
 
 <br/></br>
