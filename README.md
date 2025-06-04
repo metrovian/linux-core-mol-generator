@@ -1,4 +1,4 @@
-# Molecule Generator #
+# Mole Generator #
 Personal application software to understand material database in depth.
 
 <br/></br>
