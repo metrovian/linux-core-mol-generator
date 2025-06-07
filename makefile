@@ -1,9 +1,9 @@
 CC := gcc
 CFLAGS := -Iinclude -Wall -Wno-pointer-sign -Wno-incompatible-pointer-types
-LDFLAGS := -lcurl -lmicrohttpd -lspdlog -lfmt -lm -pthread
+LDFLAGS := -lcurl -lmicrohttpd -lopenbabel -lspdlog -lfmt -lm -pthread
 
 CXX := g++
-CXXFLAGS := -Iinclude -Wall
+CXXFLAGS := -Iinclude -I/usr/include/openbabel3 -Wall -Wno-deprecated-declarations
 
 WRAPPER_SRCS := $(wildcard source/*.cpp)
 WRAPPER_OBJS := $(WRAPPER_SRCS:.cpp=.o)
