@@ -1,0 +1,381 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Open Babel
+Upstream-Contact: Geoffrey R. Hutchison <babel@geoffhutchison.net>
+Source: https://github.com/openbabel/openbabel
+License: GPL-2
+Comment: This package was debianized by Michael Banck <mbanck@gmx.net> on
+ Wed, 28 Nov 2001 23:25:19 +0100. It is currently maintained by the
+ debichem team <debichem-devel@lists.alioth.debian.org>.
+Files-Excluded:
+ external
+ include/inchi
+ include/libxml
+ scripts/csharp
+ scripts/java/openbabel.jar
+ src/formats/libinchi
+
+Files: *
+Copyright: 1998-2003 by OpenEye Scientific Software, Inc.
+           2000-2012, Geoffrey R. Hutchison
+           2004-2011, Chris Morley
+           2006-2012, Tim Vandermeersch
+ Portions Copyright (ordered alphabetically):
+    Adrià Cereto-Massagué                                     2012
+    Albert DeFusco                                            2011
+    Alex M. Clark                                             2002-2006
+    ALTANA PHARMA AG                                          2003-2005
+    Andrei Gakh                                               2007, 2008
+    Barry Moore                                               2012
+    Benoit Jacob                                              2006, 2009
+    Casper Steinmann                                          2013
+    Craig A. James, eMolecules Inc                            2005-2007, 2009
+    Culgi B. V.                                               2011-2019
+    Daniel Mansfield                                          2007
+    Dagmar Lenk                                               2014
+    David R. Koes                                             2015, 2019
+    David Lonie                                               2009, 2010
+    David van der Spoel                                       2015
+    Donald E. Curtis                                          2006
+    Elmar Krieger                                             2002-2006
+    Fabien Fontaine                                           2003
+    Frank Peters                                              2009
+    Fredrik Wallner                                           2006
+    Gerde Menche                                              2007
+    Grupo de NanoMateriales                                   2012
+    International Union of Pure and Applied Chemistry (IUPAC) 2005
+    James Kanze                                               1998
+    Jean Bréfort                                              2007-2011
+    Jens Thomas                                               2008-2010
+    Jeremy W. Murphy                                          2010
+    Jiahao Chen                                               2010
+    Joerg Kurt Wegner                                         2010
+    Joerg-Ruediger Hill                                       1999
+    Kasper Peeters                                            2001-2009
+    Kirill Okhotnikov                                         2014
+    Konstantin L. Tokarev                                     2009, 2010
+    M. J. Harvey, Acellera Ltd                                2015
+    Maciej Wojcikowski                                        2013
+    Marcus D. Hanwell                                         2008
+    Materials Design, Inc.                                    2012
+    Mathias Laurin                                            2014
+    Matt Swain                                                2013, 2017-2018
+    Maxim Fedorovsky                                          2007
+    Michael Banck                                             2003, 2004, 2009, 2011
+    Mike N. Burnett                                           2007
+    NextMove Software                                         2012, 2013, 2016, 2019
+    Nick England                                              2005
+    Noel M. O'Boyle                                           2008-2018
+    Oliver Weichold                                           1996-2002
+    Pat Lorton                                                2019
+    Patrick Fuller                                            2013
+    Patrick S. Avery                                          2015, 2018
+    Pawel Wolinski                                            2003
+    Rational Discovery LLC                                    2003-2006
+    Reinis Danne                                              2010
+    Sangwoo Shim                                              2006
+    Scarlet Line                                              2007-2008
+    Schrodinger Inc.                                          2013, 2016, 2019
+    Sergei V. Trepalin                                        2007, 2008
+    Serguei Patchkovskii                                      1996, 2003
+    Silicos NV                                                2005-2010
+    Stefan Kebekus                                            2002
+    Steffen Reith                                             1996-2002
+    Stuart Armstrong of Source Science                        2010
+    Swiss National Supercomputing Centre (CSCS)               2006, 2007
+    Torsten Sachse                                            2016
+    University of Tuebingen, Germany                          2001-2005
+    Vincent Favre-Nicolin                                     2006, 2009
+License: GPL-2
+Comment: Some files are licensed, such that you can redistribute them and/or
+ modify them under the terms of the GNU General Public License (GPL) as
+ published by the Free Software Foundation, ; either version 2 of the License,
+ or (at your option) any later version.
+
+
+Files: src/formats/xml/iconv.h include/iconv.h
+Copyright: 1999-2003 Free Software Foundation, Inc.
+License: LGPL-2+
+
+
+Files: src/strncasecmp.c
+Copyright: 1998, 1999 Free Software Foundation, Inc
+License: GPL-2+
+
+
+Files: tools/getopt.*
+Copyright: 1987-2001 Free Software Foundation, Inc
+License: LGPL-2.1+
+
+
+Files: src/formats/ArrayList.*
+Copyright: 2006-2008 by Scientific Computing and Modelling NV
+License: LGPL-2 or LGPL-2.1 or LGPL-3
+
+
+Files: src/zipstreamimpl.h src/zipstream.h
+Copyright: 2003, Jonathan de Halleux.
+           2003, Andreas Zieringer.
+           2005, Geoffrey Hutchison.
+License: Zlib
+
+
+Files: include/zlib.h include/zconf.h
+Copyright: 1995-2005, Jean-loup Gailly and Mark Adler
+License: Zlib
+
+
+Files: src/formats/smiley.h
+Copyright: 2012, Tim Vandermeersch
+License: BSD-3-Clause
+
+
+Files: cmake/modules/FindEigen2.cmake
+Copyright: 2006, 2007, Montel Laurent
+ 2008, 2009 Gael Guennebaud
+License: BSD-3-Clause
+
+
+Files: cmake/modules/FindEigen3.cmake
+Copyright: 2006, 2007, Montel Laurent
+ 2008, 2009, Gael Guennebaud
+ 2009, Benoit Jacob
+License: BSD-2-Clause
+
+
+Files: cmake/modules/FindInchi.cmake
+Copyright: 2010, Marcus D. Hanwell
+License: BSD-3-Clause
+
+
+Files: cmake/modules/UsePythonTest.cmake
+Copyright: 2006-2010, Mathieu Malaterre
+License: BSD-3-Clause
+
+
+Files: cmake/modules/FindCairo.cmake
+Copyright: 2007, 2010, Pino Toscano
+License: BSD-3-Clause
+
+
+Files: src/snprintf.c
+Copyright: 1999-2002, Mark Martinec
+License: Artistic or GPL
+ This program is free software; it is dual licensed, the terms of
+ the "Frontier Artistic License" or the "GNU General Public
+ License" can be chosen at your discretion. The chosen license
+ then applies solely and in its entirety.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty
+ of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the Frontier Artistic License for more details.
+ .
+ You should have received a copy of the Frontier Artistic License
+ with this Kit in the file named LICENSE.txt .
+ If not, I'll be glad to provide one.
+
+
+Files: data/MACCS.txt
+Copyright: 2001-2008, Greg Landrum and Rational Discovery LLC
+License: BSD-3-Clause
+
+
+Files: data/SMARTS_InteLigand.txt
+Copyright: 2005, Inte:Ligand Software-Entwicklungs und Consulting GmbH
+License: LGPL-3
+
+
+Files: debian/*
+Copyright: 2002-2012 Michael Banck <mbanck@debian.org>
+           2007-2012 Daniel Leidert <dleidert@debian.org>
+License: GPL-2+
+
+
+License: GPL-2
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation version 2 of the License.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+Comment: On Debian systems the complete text of the GNU General Public License
+ version 2 can be found in the file `/usr/share/common-licenses/GPL-2'.
+
+
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+Comment: On Debian systems the complete text of the GNU General Public License
+ version 2 can be found in the file `/usr/share/common-licenses/GPL-2'.
+
+
+License: LGPL-2
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+ .
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+Comment: On Debian systems the complete text of the GNU Lessser General Public
+ License 2 can be found in the file `/usr/share/common-licenses/LGPL-2'.
+
+
+License: LGPL-2+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+ .
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+Comment: On Debian systems the complete text of the GNU Lessser General Public
+ License 2 can be found in the file `/usr/share/common-licenses/LGPL-2'.
+
+
+License: LGPL-2.1
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License, version 2.1 as published by the Free Software Foundation.
+ .
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+Comment: On Debian systems the complete text of the GNU Lessser General Public
+ License 2.1 can be found in the file `/usr/share/common-licenses/LGPL-2.1'.
+
+
+License: LGPL-2.1+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ .
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+Comment: On Debian systems the complete text of the GNU Lessser General Public
+ License 2.1 can be found in the file `/usr/share/common-licenses/LGPL-2.1'.
+
+
+License: LGPL-3
+ This package is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License, version 3 as published by the Free Software Foundation.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
+Comment:  On Debian systems, the complete text of the GNU Lesser General Public
+ License can be found in "/usr/share/common-licenses/LGPL-3".
+
+
+License: Zlib
+ This software is provided 'as-is', without any express or implied warranty. In
+ no event will the authors be held liable for any damages arising from the use
+ of this software.
+ .
+ Permission is granted to anyone to use this software for any purpose,
+ including commercial applications, and to alter it and redistribute it freely,
+ subject to the following restrictions:
+ .
+ 1. The origin of this software must not be misrepresented; you must not claim
+    that you wrote the original software. If you use this software in a
+    product, an acknowledgment in the product documentation would be
+    appreciated but is not required.
+ .
+ 2. Altered source versions must be plainly marked as such, and must not be
+    misrepresented as being the original software.
+ .
+ 3. This notice may not be removed or altered from any source distribution
+
+
+License: BSD-3-Clause
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of the University nor the names of its contributors
+    may be used to endorse or promote products derived from this software
+    without specific prior written permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
+
+
+License: BSD-2-Clause
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ .
+ 1. Redistributions of source code must retain the above copyright notice, this
+    list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
