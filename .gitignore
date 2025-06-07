@@ -1,3 +1,9 @@
+# Targets
+bin/
+
+# Vscode
+.vscode/
+
 # Prerequisites
 *.d
 
