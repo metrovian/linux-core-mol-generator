@@ -4,7 +4,8 @@ CREATE TABLE molecule (
     id SERIAL PRIMARY KEY,
     name TEXT,
     smiles TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(name, smiles)
 );
 
 CREATE TABLE mass_spectrum (
