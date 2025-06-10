@@ -6,3 +6,4 @@
 
 extern int8_t database_spectrum_open();
 extern int8_t database_spectrum_close();
+extern int8_t database_spectrum_insert_molecule(const char *name, const char *smiles);

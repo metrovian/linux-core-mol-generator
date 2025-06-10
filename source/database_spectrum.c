@@ -34,3 +34,27 @@ extern int8_t database_spectrum_close() {
 
 	return 0;
 }
+
+extern int8_t database_spectrum_insert_molecule(const char *name, const char *smiles) {
+	const char *params_query[2] = {name, smiles};
+	PGresult *result_query =
+	    PQexecParams(
+		database_spectrum,
+		"INSERT INTO molecule (name, smiles) VALUES ($1, $2)",
+		2,
+		NULL,
+		params_query,
+		NULL,
+		NULL,
+		0);
+
+	if (PQresultStatus(result_query) != PGRES_COMMAND_OK) {
+		PQclear(result_query);
+		log_error("failed to insert molecule (%s, %s)", name, smiles);
+		return -1;
+	}
+
+	PQclear(result_query);
+	log_info("molecule insert success (%s, %s)", name, smiles);
+	return 0;
+}
