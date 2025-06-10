@@ -11,4 +11,9 @@
 #define SYS_LOGGER_SIZE         4096
 #define SYS_LOGGER_LOGLEVEL     2
 
+#define SPECTRUM_MASS_BIN       1000
+#define SPECTRUM_FTIR_BIN       1000
+
+#define NET_POSTGRESQL_PORT     5432
+
 // clang-format on
