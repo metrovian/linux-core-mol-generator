@@ -1,5 +1,6 @@
 #!/bin/bash
 
+sudo systemctl restart postgresql
 sudo cp -arvf postgresql/*.conf /etc/postgresql/16/main/
 sudo chown postgres:postgres /etc/postgresql/16/main/*.conf
 
