@@ -14,6 +14,10 @@
 #define SPECTRUM_MASS_BIN       1000
 #define SPECTRUM_FTIR_BIN       1000
 
+#define EXTERNAL_GENERAL_MAX    1024
+#define EXTERNAL_NAME_MAX       1024
+#define EXTERNAL_SMILES_MAX     1024
+
 #define NET_POSTGRESQL_PORT     5432
 
 // clang-format on

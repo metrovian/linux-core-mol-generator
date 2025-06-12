@@ -10,10 +10,10 @@ extern int8_t database_external_massbank_migration(const char *name) {
 		return -1;
 	}
 
-	char massbank_line[1024];
-	char mol_name[256];
-	char mol_smiles[512];
-	char mol_peaks_number[512];
+	char massbank_line[EXTERNAL_GENERAL_MAX];
+	char mol_name[EXTERNAL_NAME_MAX];
+	char mol_smiles[EXTERNAL_SMILES_MAX];
+	char mol_peaks_number[EXTERNAL_GENERAL_MAX];
 	float mol_peaks_data[SPECTRUM_MASS_BIN];
 	float data_mzrate = 0;
 	int32_t data_intensity = 0;
