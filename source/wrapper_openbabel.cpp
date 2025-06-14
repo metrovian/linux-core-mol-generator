@@ -37,7 +37,7 @@ extern char *mol_create(const char *smiles) {
 	}
 
 	OpenBabel::OBBuilder builder;
-	if (!builder.Build(mol)) {
+	if (!builder.Build(mol, false)) {
 		log_error("failed to build molecular structure");
 		return NULL;
 	}
