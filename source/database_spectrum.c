@@ -161,3 +161,54 @@ extern int8_t database_spectrum_insert_mass(const char *name, const char *smiles
 	log_info("mass spectrum insert success (%s, %s)", name, smiles);
 	return 0;
 }
+
+extern float database_spectrum_select_mass(char *name, char *smiles, float *peaks_data, int32_t name_size, int32_t smiles_size, int32_t peaks_number) {
+	char molecule_vector[4096];
+	char *ptr_vector = molecule_vector;
+	ptr_vector += sprintf(ptr_vector, "[");
+	for (int32_t i = 0; i < peaks_number; i++) {
+		ptr_vector += sprintf(ptr_vector, "%.0f", peaks_data[i]);
+		if (i < peaks_number - 1) {
+			ptr_vector += sprintf(ptr_vector, ",");
+		}
+	}
+
+	sprintf(ptr_vector, "]");
+	const char *param_query[1] = {molecule_vector};
+	PGresult *result_query = PQexecParams(
+	    database_spectrum,
+	    "SELECT molecule.name, molecule.smiles, (mass_spectrum.spectrum_vector <-> $1) AS distance "
+	    "FROM mass_spectrum "
+	    "JOIN molecule ON mass_spectrum.molecule_id = molecule.id "
+	    "ORDER BY mass_spectrum.spectrum_vector <-> $1 "
+	    "LIMIT 1",
+	    1,
+	    NULL,
+	    param_query,
+	    NULL,
+	    NULL,
+	    0);
+
+	if (PQresultStatus(result_query) != PGRES_TUPLES_OK) {
+		PQclear(result_query);
+		log_error("failed to select mass spectrum");
+		return -1;
+	}
+
+	if (PQntuples(result_query) < 1) {
+		PQclear(result_query);
+		log_error("failed to select mass spectrum");
+		return -1;
+	}
+
+	const char *result_name = PQgetvalue(result_query, 0, 0);
+	const char *result_smiles = PQgetvalue(result_query, 0, 1);
+	const char *result_similarity = PQgetvalue(result_query, 0, 2);
+	snprintf(name, name_size, "%s", result_name);
+	snprintf(smiles, smiles_size, "%s", result_smiles);
+	float distance = strtof(result_similarity, NULL);
+	float similarity = 1.0 / (1.0 + distance / (float)peaks_number);
+	PQclear(result_query);
+	log_info("mass specturm select success (%s, %s, %.03f%%)", name, smiles, similarity * 100);
+	return similarity;
+}
