@@ -18,18 +18,18 @@ extern int8_t database_spectrum_open() {
 	database_spectrum = PQconnectdb(command_open);
 	if (PQstatus(database_spectrum) != CONNECTION_OK) {
 		PQfinish(database_spectrum);
-		log_error("failed to database_spectrumect database");
+		log_error("failed to connect database");
 		return -1;
 	}
 
-	log_info("postgresql service started");
+	log_info("database service started");
 	return 0;
 }
 
 extern int8_t database_spectrum_close() {
 	if (database_spectrum) {
 		PQfinish(database_spectrum);
-		log_info("postgresql service terminated");
+		log_info("database service terminated");
 	}
 
 	return 0;
