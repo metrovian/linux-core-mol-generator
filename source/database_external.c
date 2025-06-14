@@ -30,10 +30,10 @@ extern int8_t database_external_massbank_migration(const char *name) {
 		} else if (strncmp(massbank_line, "Num Peaks: ", 11) == 0) {
 			sscanf(massbank_line + 11, " %[^\n]", mol_peaks_number);
 			peaks_number = atoi(mol_peaks_number);
-		} else if (peaks_number > 0) {
 			while (peaks_number--) {
+				fgets(massbank_line, sizeof(massbank_line), fptr);
 				sscanf(massbank_line, "%f %d", &data_mzrate, &data_intensity);
-				mol_peaks_data[(int32_t)floor(data_mzrate + 0.5)] = data_intensity;
+				mol_peaks_data[(int32_t)(data_mzrate + 0.5)] = data_intensity;
 			}
 
 			database_spectrum_insert_mass(mol_name, mol_smiles, mol_peaks_data, SPECTRUM_MASS_BIN);
