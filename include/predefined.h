@@ -18,6 +18,6 @@
 #define EXTERNAL_NAME_MAX       1024
 #define EXTERNAL_SMILES_MAX     1024
 
-#define NET_POSTGRESQL_PORT     5432
-
+#define NET_DATABASE_PORT       5432
+#define NET_API_PORT            5435
 // clang-format on

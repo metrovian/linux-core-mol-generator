@@ -13,7 +13,7 @@ extern int8_t database_spectrum_open() {
 	    "port=%d "
 	    "dbname=spectrum "
 	    "user=postgres ",
-	    NET_POSTGRESQL_PORT);
+	    NET_DATABASE_PORT);
 
 	database_spectrum = PQconnectdb(command_open);
 	if (PQstatus(database_spectrum) != CONNECTION_OK) {
