@@ -172,7 +172,7 @@
 				headers: { 'Content-Type': 'text/plain' },
 				body: rawText
 			}).then(response => {
-				if (!response.ok) throw new Error("Server error");
+				if (!response.ok) throw new Error("API server error");
 				return response.text();
 			}).then(text => {
 				const blob = new Blob([text], { type: 'chemical/x-mdl-molfile' });
@@ -182,7 +182,7 @@
 				link.click();
 				URL.revokeObjectURL(link.href);
 			}).catch(err => {
-				alert("Submit failed: " + err.message);
+				alert("Generate failed: " + err.message);
 			});
 		}
 	</script>
