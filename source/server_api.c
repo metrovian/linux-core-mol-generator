@@ -40,7 +40,7 @@ static char *server_api_request_mass(struct MHD_Post *post) {
 		}
 
 		if (database_spectrum_select_mass(name, smiles, peaks_data, EXTERNAL_NAME_MAX, EXTERNAL_SMILES_MAX, SPECTRUM_MASS_BIN) > 0) {
-			return mol_create((const char *)smiles);
+			return mol_create((const char *)name, (const char *)smiles);
 		}
 	}
 

@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 
-extern char *mol_create(const char *smiles) {
+extern char *mol_create(const char *name, const char *smiles) {
 	OpenBabel::OBMol mol;
 	OpenBabel::OBConversion inconv;
 	OpenBabel::OBFormat *input = inconv.FindFormat("smi");
@@ -42,6 +42,7 @@ extern char *mol_create(const char *smiles) {
 		return NULL;
 	}
 
+	mol.SetTitle(name);
 	std::string molstr = outconv.WriteString(&mol, true);
 	return strdup(molstr.c_str());
 }
