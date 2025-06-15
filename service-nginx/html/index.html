@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Mol Generator</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			padding: 40px; 
+			background-color: #f0f0f0;
+		}
+		.container {
+			background: white;
+			padding: 30px;
+			padding-top: 15px;
+			padding-right: 50px;
+			border-radius: 12px;
+			max-width: 460px;
+			margin: auto;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+		}
+		h1 {
+			text-align: left;
+			color: #333;
+			margin-bottom: 25px;
+			font-size: 24px;
+		}
+		.radio-group {
+			display: flex;
+			flex-direction: column;
+			margin-bottom: 20px;
+		}
+		.radio-group label {
+			margin-bottom: 6px;
+			text-transform: uppercase;
+			font-size: 14px;
+		}
+		.input-row {
+			display: flex;
+			gap: 8px;
+			margin-bottom: 15px;
+			align-items: center;
+			flex-wrap: wrap;
+		}
+		input[type="number"] {
+			width: 115px;
+			padding: 6px;
+			font-size: 13px;
+		}
+		button {
+			padding: 6px 10px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 13px;
+		}
+		button:hover {
+			background-color: #45a049;
+		}
+		textarea {
+			width: 100%;
+			height: 180px;
+			font-family: 'Courier New', Courier, monospace;
+			font-size: 13px;
+			padding: 8px;
+			border-radius: 8px;
+			border: 1px solid #ccc;
+			resize: vertical;
+		}
+		.info-row {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 6px;
+			margin-bottom: 20px;
+			font-size: 12px;
+			color: #666;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Mol Generator</h1>
+		<div class="radio-group">
+			<label><input type="radio" name="specType" value="mass" checked> ms</label>
+			<label><input type="radio" name="specType" value="ftir" disabled> ftir (coming soon)</label>
+			<label><input type="radio" name="specType" value="nmr" disabled> nmr (coming soon)</label>
+		</div>
+		<div class="input-row">
+			<input type="number" id="mzInput" placeholder="m/z (0-999)" min="0" max="999">
+			<input type="number" id="intensityInput" placeholder="intensity (0-999)" min="0" max="999">
+			<button onclick="addPeak()">add</button>
+			<button onclick="submitData()">generate</button>
+		</div>
+		<textarea id="peakTextArea" placeholder="m/z intensity"></textarea>
+	</div>
+	<script>
+		let peaks = [];
+
+		function addPeak() {
+			const mz = parseInt(document.getElementById('mzInput').value);
+			const intensity = parseInt(document.getElementById('intensityInput').value);
+			if (isNaN(mz) || isNaN(intensity) || mz < 0 || mz > 999 || intensity < 0 || intensity > 999) {
+				alert("Please enter valid m/z (0-999) and intensity (0-999).");
+				return;
+			}
+			
+			peaks.push({ mz, intensity });
+			sortPeaks();
+			updateTextArea();
+			document.getElementById('mzInput').value = '';
+			document.getElementById('intensityInput').value = '';
+		}
+
+		function sortPeaks() {
+			peaks.sort((a, b) => a.mz - b.mz);
+		}
+
+		function updateTextArea() {
+			const textarea = document.getElementById('peakTextArea');
+			const lines = peaks.map(p => `${Math.floor(p.mz + 0.5)} ${p.intensity}`);
+			textarea.value = lines.join('\n');
+		}
+
+		function updateFromText() {
+			const textarea = document.getElementById('peakTextArea');
+			const lines = textarea.value.trim().split('\n');
+			const newPeaks = [];
+			for (let i = 0; i < lines.length; i++) {
+				const line = lines[i].trim();
+				if (line === '') {
+					continue;
+				}
+
+				const parts = line.split(' ');
+				if (parts.length !== 2) {
+					alert(`Line ${i + 1} is invalid: "${line}"`);
+					return;
+				}
+
+				const mz = Math.floor(parseFloat(parts[0]) + 0.5);
+				const intensity = parseInt(parts[1]);
+				if (isNaN(mz) || isNaN(intensity) || mz < 0 || mz > 999 || intensity < 0 || intensity > 999) {
+					alert(`Line ${i + 1} has invalid values: "${line}"`);
+					return;
+				}
+
+				newPeaks.push({ mz, intensity });
+			}
+
+			peaks = newPeaks;
+			sortPeaks();
+			updateTextArea();
+		}
+
+		function submitData() {
+			updateFromText()
+			if (peaks.length === 0) {
+				alert("Please add at least one peak before generating.");
+				return;
+			}
+
+			const data = Array(1000).fill(0);
+			peaks.forEach(({ mz, intensity }) => {
+				data[mz] = intensity;
+			});
+
+			const rawText = data.join(",");
+			fetch('/api/mass', {
+				method: 'POST',
+				headers: { 'Content-Type': 'text/plain' },
+				body: rawText
+			}).then(response => {
+				if (!response.ok) throw new Error("API server error");
+				return response.text();
+			}).then(text => {
+				const blob = new Blob([text], { type: 'chemical/x-mdl-molfile' });
+				const link = document.createElement('a');
+				link.href = URL.createObjectURL(blob);
+				link.download = 'generated.mol';
+				link.click();
+				URL.revokeObjectURL(link.href);
+			}).catch(err => {
+				alert("Generate failed: " + err.message);
+			});
+		}
+	</script>
+</body>
+</html>

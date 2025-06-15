@@ -8,12 +8,12 @@
 #include <cstdlib>
 #include <cstring>
 
-extern char *mol_create(const char *smile) {
+extern char *mol_create(const char *name, const char *smiles) {
 	OpenBabel::OBMol mol;
 	OpenBabel::OBConversion inconv;
 	OpenBabel::OBFormat *input = inconv.FindFormat("smi");
 	if (!input) {
-		log_error("failed to find smile format");
+		log_error("failed to find smiles format");
 		return NULL;
 	}
 
@@ -26,8 +26,8 @@ extern char *mol_create(const char *smile) {
 
 	inconv.SetInFormat(input);
 	outconv.SetOutFormat(output);
-	if (!inconv.ReadString(&mol, smile)) {
-		log_error("failed to parse smile format");
+	if (!inconv.ReadString(&mol, smiles)) {
+		log_error("failed to parse smiles format");
 		return NULL;
 	}
 
@@ -37,11 +37,12 @@ extern char *mol_create(const char *smile) {
 	}
 
 	OpenBabel::OBBuilder builder;
-	if (!builder.Build(mol)) {
+	if (!builder.Build(mol, false)) {
 		log_error("failed to build molecular structure");
 		return NULL;
 	}
 
+	mol.SetTitle(name);
 	std::string molstr = outconv.WriteString(&mol, true);
 	return strdup(molstr.c_str());
 }
