@@ -91,8 +91,18 @@ static int32_t server_api_request_handler(
 			if (strncmp(url, "/mass", 5) == 0) {
 				char *mass_mol = server_api_request_mass(con_post);
 				if (!mass_mol) {
-					log_error("failed to create molecule from mass spectrum");
-					return MHD_NO;
+					struct MHD_Response *response =
+					    MHD_create_response_from_buffer(
+						0,
+						NULL,
+						MHD_RESPMEM_PERSISTENT);
+
+					int32_t ret = MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, response);
+					MHD_destroy_response(response);
+					free(con_post->data);
+					free(con_post);
+					log_error("failed to create molecular structure from mass spectrum");
+					return ret;
 				} else {
 					struct MHD_Response *response =
 					    MHD_create_response_from_buffer(
@@ -102,9 +112,14 @@ static int32_t server_api_request_handler(
 
 					int32_t ret = MHD_queue_response(connection, MHD_HTTP_OK, response);
 					MHD_destroy_response(response);
+					free(con_post->data);
+					free(con_post);
 					free(mass_mol);
 					return ret;
 				}
+			} else {
+				free(con_post->data);
+				free(con_post);
 			}
 		}
 	}
