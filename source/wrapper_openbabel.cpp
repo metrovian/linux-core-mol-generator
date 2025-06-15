@@ -4,6 +4,7 @@
 #include <openbabel/obconversion.h>
 #include <openbabel/mol.h>
 #include <openbabel/op.h>
+#include <openbabel/forcefield.h>
 #include <openbabel/builder.h>
 #include <cstdlib>
 #include <cstring>
@@ -42,6 +43,14 @@ extern char *mol_create(const char *name, const char *smiles) {
 		return NULL;
 	}
 
+	OpenBabel::OBForceField *field = OpenBabel::OBForceField::FindForceField("mmff94");
+	if (!field->Setup(mol)) {
+		log_error("failed to optimize molecular structure");
+		return NULL;
+	}
+
+	field->ConjugateGradients(500);
+	field->GetCoordinates(mol);
 	mol.SetTitle(name);
 	std::string molstr = outconv.WriteString(&mol, true);
 	return strdup(molstr.c_str());
