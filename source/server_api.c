@@ -108,7 +108,7 @@ static int32_t server_api_request_handler(
 					    MHD_create_response_from_buffer(
 						strlen(mass_mol),
 						(void *)mass_mol,
-						MHD_RESPMEM_PERSISTENT);
+						MHD_RESPMEM_MUST_COPY);
 
 					int32_t ret = MHD_queue_response(connection, MHD_HTTP_OK, response);
 					MHD_destroy_response(response);
