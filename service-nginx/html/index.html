@@ -119,7 +119,7 @@
 
 		function updateTextArea() {
 			const textarea = document.getElementById('peakTextArea');
-			const lines = peaks.map(p => `${p.mz} ${p.intensity}`);
+			const lines = peaks.map(p => `${Math.floor(p.mz + 0.5)} ${p.intensity}`);
 			textarea.value = lines.join('\n');
 		}
 
@@ -139,7 +139,7 @@
 					return;
 				}
 
-				const mz = parseInt(parts[0]);
+				const mz = Math.floor(parseFloat(parts[0]) + 0.5);
 				const intensity = parseInt(parts[1]);
 				if (isNaN(mz) || isNaN(intensity) || mz < 0 || mz > 999 || intensity < 0 || intensity > 999) {
 					alert(`Line ${i + 1} has invalid values: "${line}"`);
@@ -163,7 +163,7 @@
 
 			const data = Array(1000).fill(0);
 			peaks.forEach(({ mz, intensity }) => {
-				data[Math.floor(mz + 0.5)] = intensity;
+				data[mz] = intensity;
 			});
 
 			const rawText = data.join(",");
