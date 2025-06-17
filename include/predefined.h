@@ -12,7 +12,8 @@
 #define SYS_LOGGER_LOGLEVEL     2
 
 #define SPECTRUM_MASS_BIN       1000
-#define SPECTRUM_FTIR_BIN       1000
+#define SPECTRUM_NMR_BIN        1500
+#define SPECTRUM_OPTICS_BIN     2000
 
 #define EXTERNAL_GENERAL_MAX    1024
 #define EXTERNAL_NAME_MAX       1024
