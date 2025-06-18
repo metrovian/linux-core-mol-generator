@@ -9,6 +9,7 @@
 
 extern int8_t database_spectrum_open();
 extern int8_t database_spectrum_close();
+extern int8_t database_spectrum_status();
 
 extern int8_t database_spectrum_insert_molecule(const char *name, const char *smiles);
 extern int8_t database_spectrum_insert_mass(const char *name, const char *smiles, float *peaks_data, int32_t peaks_number);

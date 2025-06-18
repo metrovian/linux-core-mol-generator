@@ -29,10 +29,15 @@ extern int8_t database_spectrum_open() {
 extern int8_t database_spectrum_close() {
 	if (database_spectrum) {
 		PQfinish(database_spectrum);
+		database_spectrum = NULL;
 		log_info("database service terminated");
 	}
 
 	return 0;
+}
+
+extern int8_t database_spectrum_status() {
+	return database_spectrum != NULL;
 }
 
 extern int8_t database_spectrum_insert_molecule(const char *name, const char *smiles) {
