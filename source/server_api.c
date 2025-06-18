@@ -164,3 +164,7 @@ extern int8_t server_api_close() {
 
 	return 0;
 }
+
+extern int8_t server_api_status() {
+	return server_api != NULL;
+}
