@@ -1,4 +1,5 @@
 #include "database_spectrum.h"
+#include "wrapper_openbabel.h"
 #include "wrapper_spdlog.h"
 #include "predefined.h"
 
@@ -55,12 +56,12 @@ extern int8_t database_spectrum_insert_molecule(const char *name, const char *in
 
 	if (PQresultStatus(result_query) != PGRES_COMMAND_OK) {
 		PQclear(result_query);
-		log_error("failed to insert molecule (%s, %s)", name, inchi);
+		log_error("failed to insert molecule (%s, %s)", name, mol_hash(inchi));
 		return -1;
 	}
 
 	PQclear(result_query);
-	log_info("molecule insert success (%s, %s)", name, inchi);
+	log_info("molecule insert success (%s, %s)", name, mol_hash(inchi));
 	return 0;
 }
 
@@ -69,7 +70,7 @@ extern int8_t database_spectrum_insert_mass(const char *name, const char *inchi,
 	if (PQresultStatus(result_query) != PGRES_COMMAND_OK) {
 		PQclear(result_query);
 		log_error("failed to begin transaction");
-		log_error("failed to insert mass spectrum (%s, %s)", name, inchi);
+		log_error("failed to insert mass spectrum (%s, %s)", name, mol_hash(inchi));
 		return -1;
 	}
 
@@ -88,8 +89,8 @@ extern int8_t database_spectrum_insert_mass(const char *name, const char *inchi,
 	if (PQresultStatus(result_query) != PGRES_TUPLES_OK) {
 		PQclear(result_query);
 		PQexec(database_spectrum, "ROLLBACK");
-		log_error("failed to select molecule (%s, %s)", name, inchi);
-		log_error("failed to insert mass spectrum (%s, %s)", name, inchi);
+		log_error("failed to select molecule (%s, %s)", name, mol_hash(inchi));
+		log_error("failed to insert mass spectrum (%s, %s)", name, mol_hash(inchi));
 		return -1;
 	}
 
@@ -109,12 +110,12 @@ extern int8_t database_spectrum_insert_mass(const char *name, const char *inchi,
 		if (PQresultStatus(result_query) != PGRES_TUPLES_OK) {
 			PQclear(result_query);
 			PQexec(database_spectrum, "ROLLBACK");
-			log_error("failed to insert molecule (%s, %s)", name, inchi);
-			log_error("failed to insert mass spectrum (%s, %s)", name, inchi);
+			log_error("failed to insert molecule (%s, %s)", name, mol_hash(inchi));
+			log_error("failed to insert mass spectrum (%s, %s)", name, mol_hash(inchi));
 			return -1;
 		}
 
-		log_info("molecule insert success (%s, %s)", name, inchi);
+		log_info("molecule insert success (%s, %s)", name, mol_hash(inchi));
 	}
 
 	char molecule_id[32];
@@ -149,7 +150,7 @@ extern int8_t database_spectrum_insert_mass(const char *name, const char *inchi,
 	if (PQresultStatus(result_query) != PGRES_COMMAND_OK) {
 		PQclear(result_query);
 		PQexec(database_spectrum, "ROLLBACK");
-		log_error("failed to insert mass spectrum (%s, %s)", name, inchi);
+		log_error("failed to insert mass spectrum (%s, %s)", name, mol_hash(inchi));
 		return -1;
 	}
 
@@ -158,12 +159,12 @@ extern int8_t database_spectrum_insert_mass(const char *name, const char *inchi,
 	if (PQresultStatus(result_query) != PGRES_COMMAND_OK) {
 		PQclear(result_query);
 		log_error("failed to commit transaction");
-		log_error("failed to insert mass spectrum (%s, %s)", name, inchi);
+		log_error("failed to insert mass spectrum (%s, %s)", name, mol_hash(inchi));
 		return -1;
 	}
 
 	PQclear(result_query);
-	log_info("mass spectrum insert success (%s, %s)", name, inchi);
+	log_info("mass spectrum insert success (%s, %s)", name, mol_hash(inchi));
 	return 0;
 }
 
@@ -214,6 +215,6 @@ extern float database_spectrum_select_mass(char *name, char *inchi, float *peaks
 	float distance = strtof(result_similarity, NULL);
 	float similarity = 1.0 / (1.0 + distance / (float)peaks_number);
 	PQclear(result_query);
-	log_info("mass specturm select success (%s, %s, %.03f%%)", name, inchi, similarity * 100);
+	log_info("mass specturm select success (%s, %s, %.03f%%)", name, mol_hash(inchi), similarity * 100);
 	return similarity;
 }
