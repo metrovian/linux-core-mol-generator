@@ -79,7 +79,9 @@ extern char *mol_hash(const char *inchi) {
 		return NULL;
 	}
 
-	std::string keystr = outconv.WriteString(&mol);
-	keystr.erase(keystr.find_last_not_of(" \n\r\t") + 1);
-	return strdup(keystr.c_str());
+	static char hash[28];
+	std::string hashstr = outconv.WriteString(&mol);
+	hashstr.erase(hashstr.find_last_not_of(" \n\r\t") + 1);
+	strncpy(hash, hashstr.c_str(), 28);
+	return hash;
 }
