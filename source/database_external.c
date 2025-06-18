@@ -41,6 +41,7 @@ extern int8_t database_external_massbank_migration(const char *name) {
 		}
 	}
 
+	fclose(fptr);
 	log_info("massbank spectrum migration success");
 	return 0;
 }
