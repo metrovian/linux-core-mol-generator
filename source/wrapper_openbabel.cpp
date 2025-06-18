@@ -55,3 +55,31 @@ extern char *mol_create(const char *name, const char *inchi) {
 	std::string molstr = outconv.WriteString(&mol, true);
 	return strdup(molstr.c_str());
 }
+
+extern char *mol_hash(const char *inchi) {
+	OpenBabel::OBMol mol;
+	OpenBabel::OBConversion inconv;
+	OpenBabel::OBFormat *input = inconv.FindFormat("inchi");
+	if (!input) {
+		log_error("failed to find inchi format");
+		return NULL;
+	}
+
+	OpenBabel::OBConversion outconv;
+	OpenBabel::OBFormat *output = outconv.FindFormat("inchikey");
+	if (!output) {
+		log_error("failed to find inchikey format");
+		return NULL;
+	}
+
+	inconv.SetInFormat(input);
+	outconv.SetOutFormat(output);
+	if (!inconv.ReadString(&mol, inchi)) {
+		log_error("failed to parse inchi format");
+		return NULL;
+	}
+
+	std::string keystr = outconv.WriteString(&mol);
+	keystr.erase(keystr.find_last_not_of(" \n\r\t") + 1);
+	return strdup(keystr.c_str());
+}
