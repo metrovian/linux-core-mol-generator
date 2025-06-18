@@ -14,7 +14,7 @@ struct MHD_Post {
 
 static char *server_api_request_mass(struct MHD_Post *post) {
 	char *name[EXTERNAL_NAME_MAX];
-	char *smiles[EXTERNAL_SMILES_MAX];
+	char *inchi[EXTERNAL_INCHI_MAX];
 	float peaks_data[SPECTRUM_MASS_BIN];
 	if (post->data) {
 		const char *post_data = post->data;
@@ -39,8 +39,8 @@ static char *server_api_request_mass(struct MHD_Post *post) {
 			post_data = post_ptr;
 		}
 
-		if (database_spectrum_select_mass(name, smiles, peaks_data, EXTERNAL_NAME_MAX, EXTERNAL_SMILES_MAX, SPECTRUM_MASS_BIN) > 0) {
-			return mol_create((const char *)name, (const char *)smiles);
+		if (database_spectrum_select_mass(name, inchi, peaks_data, EXTERNAL_NAME_MAX, EXTERNAL_INCHI_MAX, SPECTRUM_MASS_BIN) > 0) {
+			return mol_create((const char *)name, (const char *)inchi);
 		}
 	}
 

@@ -9,12 +9,12 @@
 #include <cstdlib>
 #include <cstring>
 
-extern char *mol_create(const char *name, const char *smiles) {
+extern char *mol_create(const char *name, const char *inchi) {
 	OpenBabel::OBMol mol;
 	OpenBabel::OBConversion inconv;
-	OpenBabel::OBFormat *input = inconv.FindFormat("smi");
+	OpenBabel::OBFormat *input = inconv.FindFormat("inchi");
 	if (!input) {
-		log_error("failed to find smiles format");
+		log_error("failed to find inchi format");
 		return NULL;
 	}
 
@@ -27,8 +27,8 @@ extern char *mol_create(const char *name, const char *smiles) {
 
 	inconv.SetInFormat(input);
 	outconv.SetOutFormat(output);
-	if (!inconv.ReadString(&mol, smiles)) {
-		log_error("failed to parse smiles format");
+	if (!inconv.ReadString(&mol, inchi)) {
+		log_error("failed to parse inchi format");
 		return NULL;
 	}
 
@@ -38,7 +38,7 @@ extern char *mol_create(const char *name, const char *smiles) {
 	}
 
 	OpenBabel::OBBuilder builder;
-	if (!builder.Build(mol, false)) {
+	if (!builder.Build(mol)) {
 		log_error("failed to build molecular structure");
 		return NULL;
 	}

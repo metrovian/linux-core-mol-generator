@@ -40,12 +40,12 @@ extern int8_t database_spectrum_status() {
 	return database_spectrum != NULL;
 }
 
-extern int8_t database_spectrum_insert_molecule(const char *name, const char *smiles) {
-	const char *params_query[2] = {name, smiles};
+extern int8_t database_spectrum_insert_molecule(const char *name, const char *inchi) {
+	const char *params_query[2] = {name, inchi};
 	PGresult *result_query =
 	    PQexecParams(
 		database_spectrum,
-		"INSERT INTO molecule (name, smiles) VALUES ($1, $2)",
+		"INSERT INTO molecule (name, inchi) VALUES ($1, $2)",
 		2,
 		NULL,
 		params_query,
@@ -55,29 +55,29 @@ extern int8_t database_spectrum_insert_molecule(const char *name, const char *sm
 
 	if (PQresultStatus(result_query) != PGRES_COMMAND_OK) {
 		PQclear(result_query);
-		log_error("failed to insert molecule (%s, %s)", name, smiles);
+		log_error("failed to insert molecule (%s, %s)", name, inchi);
 		return -1;
 	}
 
 	PQclear(result_query);
-	log_info("molecule insert success (%s, %s)", name, smiles);
+	log_info("molecule insert success (%s, %s)", name, inchi);
 	return 0;
 }
 
-extern int8_t database_spectrum_insert_mass(const char *name, const char *smiles, float *peaks_data, int32_t peaks_number) {
+extern int8_t database_spectrum_insert_mass(const char *name, const char *inchi, float *peaks_data, int32_t peaks_number) {
 	PGresult *result_query = PQexec(database_spectrum, "BEGIN");
 	if (PQresultStatus(result_query) != PGRES_COMMAND_OK) {
 		PQclear(result_query);
 		log_error("failed to begin transaction");
-		log_error("failed to insert mass spectrum (%s, %s)", name, smiles);
+		log_error("failed to insert mass spectrum (%s, %s)", name, inchi);
 		return -1;
 	}
 
-	const char *params_query[2] = {name, smiles};
+	const char *params_query[2] = {name, inchi};
 	result_query =
 	    PQexecParams(
 		database_spectrum,
-		"SELECT id FROM molecule WHERE name = $1 AND smiles = $2",
+		"SELECT id FROM molecule WHERE name = $1 AND inchi = $2",
 		2,
 		NULL,
 		params_query,
@@ -88,8 +88,8 @@ extern int8_t database_spectrum_insert_mass(const char *name, const char *smiles
 	if (PQresultStatus(result_query) != PGRES_TUPLES_OK) {
 		PQclear(result_query);
 		PQexec(database_spectrum, "ROLLBACK");
-		log_error("failed to select molecule (%s, %s)", name, smiles);
-		log_error("failed to insert mass spectrum (%s, %s)", name, smiles);
+		log_error("failed to select molecule (%s, %s)", name, inchi);
+		log_error("failed to insert mass spectrum (%s, %s)", name, inchi);
 		return -1;
 	}
 
@@ -98,7 +98,7 @@ extern int8_t database_spectrum_insert_mass(const char *name, const char *smiles
 		result_query =
 		    PQexecParams(
 			database_spectrum,
-			"INSERT INTO molecule (name, smiles) VALUES ($1, $2) RETURNING id",
+			"INSERT INTO molecule (name, inchi) VALUES ($1, $2) RETURNING id",
 			2,
 			NULL,
 			params_query,
@@ -109,12 +109,12 @@ extern int8_t database_spectrum_insert_mass(const char *name, const char *smiles
 		if (PQresultStatus(result_query) != PGRES_TUPLES_OK) {
 			PQclear(result_query);
 			PQexec(database_spectrum, "ROLLBACK");
-			log_error("failed to insert molecule (%s, %s)", name, smiles);
-			log_error("failed to insert mass spectrum (%s, %s)", name, smiles);
+			log_error("failed to insert molecule (%s, %s)", name, inchi);
+			log_error("failed to insert mass spectrum (%s, %s)", name, inchi);
 			return -1;
 		}
 
-		log_info("molecule insert success (%s, %s)", name, smiles);
+		log_info("molecule insert success (%s, %s)", name, inchi);
 	}
 
 	char molecule_id[32];
@@ -149,7 +149,7 @@ extern int8_t database_spectrum_insert_mass(const char *name, const char *smiles
 	if (PQresultStatus(result_query) != PGRES_COMMAND_OK) {
 		PQclear(result_query);
 		PQexec(database_spectrum, "ROLLBACK");
-		log_error("failed to insert mass spectrum (%s, %s)", name, smiles);
+		log_error("failed to insert mass spectrum (%s, %s)", name, inchi);
 		return -1;
 	}
 
@@ -158,16 +158,16 @@ extern int8_t database_spectrum_insert_mass(const char *name, const char *smiles
 	if (PQresultStatus(result_query) != PGRES_COMMAND_OK) {
 		PQclear(result_query);
 		log_error("failed to commit transaction");
-		log_error("failed to insert mass spectrum (%s, %s)", name, smiles);
+		log_error("failed to insert mass spectrum (%s, %s)", name, inchi);
 		return -1;
 	}
 
 	PQclear(result_query);
-	log_info("mass spectrum insert success (%s, %s)", name, smiles);
+	log_info("mass spectrum insert success (%s, %s)", name, inchi);
 	return 0;
 }
 
-extern float database_spectrum_select_mass(char *name, char *smiles, float *peaks_data, int32_t name_size, int32_t smiles_size, int32_t peaks_number) {
+extern float database_spectrum_select_mass(char *name, char *inchi, float *peaks_data, int32_t name_size, int32_t inchi_size, int32_t peaks_number) {
 	char molecule_vector[4096];
 	char *ptr_vector = molecule_vector;
 	ptr_vector += sprintf(ptr_vector, "[");
@@ -182,7 +182,7 @@ extern float database_spectrum_select_mass(char *name, char *smiles, float *peak
 	const char *param_query[1] = {molecule_vector};
 	PGresult *result_query = PQexecParams(
 	    database_spectrum,
-	    "SELECT molecule.name, molecule.smiles, (mass_spectrum.spectrum_vector <-> $1) AS distance "
+	    "SELECT molecule.name, molecule.inchi, (mass_spectrum.spectrum_vector <-> $1) AS distance "
 	    "FROM mass_spectrum "
 	    "JOIN molecule ON mass_spectrum.molecule_id = molecule.id "
 	    "ORDER BY mass_spectrum.spectrum_vector <-> $1 "
@@ -207,13 +207,13 @@ extern float database_spectrum_select_mass(char *name, char *smiles, float *peak
 	}
 
 	const char *result_name = PQgetvalue(result_query, 0, 0);
-	const char *result_smiles = PQgetvalue(result_query, 0, 1);
+	const char *result_inchi = PQgetvalue(result_query, 0, 1);
 	const char *result_similarity = PQgetvalue(result_query, 0, 2);
 	snprintf(name, name_size, "%s", result_name);
-	snprintf(smiles, smiles_size, "%s", result_smiles);
+	snprintf(inchi, inchi_size, "%s", result_inchi);
 	float distance = strtof(result_similarity, NULL);
 	float similarity = 1.0 / (1.0 + distance / (float)peaks_number);
 	PQclear(result_query);
-	log_info("mass specturm select success (%s, %s, %.03f%%)", name, smiles, similarity * 100);
+	log_info("mass specturm select success (%s, %s, %.03f%%)", name, inchi, similarity * 100);
 	return similarity;
 }

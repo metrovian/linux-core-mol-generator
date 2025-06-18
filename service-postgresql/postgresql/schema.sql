@@ -3,9 +3,9 @@ CREATE EXTENSION IF NOT EXISTS vector;
 CREATE TABLE molecule (
     id SERIAL PRIMARY KEY,
     name TEXT,
-    smiles TEXT,
+    inchi TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(name, smiles)
+    UNIQUE(name, inchi)
 );
 
 CREATE TABLE mass_spectrum (

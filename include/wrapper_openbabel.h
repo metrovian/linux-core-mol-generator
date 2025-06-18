@@ -6,7 +6,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern char *mol_create(const char *name, const char *smiles);
+extern char *mol_create(const char *name, const char *inchi);
 #ifdef __cplusplus
 }
 #endif
