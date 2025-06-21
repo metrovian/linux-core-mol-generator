@@ -32,7 +32,7 @@
 		}
 		.radio-group label {
 			margin-bottom: 6px;
-			text-transform: uppercase;
+			text-transform: lowercase;
 			font-size: 14px;
 		}
 		.input-row {
@@ -83,9 +83,9 @@
 	<div class="container">
 		<h1>Mol Generator</h1>
 		<div class="radio-group">
-			<label><input type="radio" name="specType" value="mass" checked> ms</label>
-			<label><input type="radio" name="specType" value="ftir" disabled> ftir (coming soon)</label>
-			<label><input type="radio" name="specType" value="nmr" disabled> nmr (coming soon)</label>
+			<label><input type="radio" name="specType" value="mass" checked> mass</label>
+			<label><input type="radio" name="specType" value="nmr"> nmr</label>
+			<label><input type="radio" name="specType" value="optics" disabled> optics (coming soon)</label>
 		</div>
 		<div class="input-row">
 			<input type="number" id="mzInput" placeholder="m/z (0-999)" min="0" max="999">
@@ -98,14 +98,43 @@
 	<script>
 		let peaks = [];
 
+		function getSpecType() {
+			return document.querySelector('input[name="specType"]:checked').value;
+		}
+
+		function updatePlaceholders() {
+			const mzInput = document.getElementById('mzInput');
+			const intensityInput = document.getElementById('intensityInput');
+			const type = getSpecType();
+
+			if (type === 'nmr') {
+				mzInput.placeholder = "ppm (0-1499)";
+				intensityInput.placeholder = "intensity (1)";
+				intensityInput.disabled = true;
+			} else {
+				mzInput.placeholder = "m/z (0-999)";
+				intensityInput.placeholder = "intensity (0-999)";
+				intensityInput.disabled = false;
+			}
+		}
+
 		function addPeak() {
+			const type = getSpecType();
 			const mz = parseInt(document.getElementById('mzInput').value);
-			const intensity = parseInt(document.getElementById('intensityInput').value);
-			if (isNaN(mz) || isNaN(intensity) || mz < 0 || mz > 999 || intensity < 0 || intensity > 999) {
-				alert("Please enter valid m/z (0-999) and intensity (0-999).");
+			let intensity = parseInt(document.getElementById('intensityInput').value);
+			const vectorSize = type === 'nmr' ? 1500 : 1000;
+			if (isNaN(mz) || mz < 0 || mz >= vectorSize) {
+				alert(`Please enter valid ${type === 'nmr' ? 'ppm (0-1499)' : 'm/z (0-999)'}.`);
 				return;
 			}
-			
+
+			if (type === 'nmr') {
+				intensity = 1;
+			} else if (isNaN(intensity) || intensity < 0 || intensity > 999) {
+				alert("Please enter valid intensity (0-999).");
+				return;
+			}
+
 			peaks.push({ mz, intensity });
 			sortPeaks();
 			updateTextArea();
@@ -124,24 +153,26 @@
 		}
 
 		function updateFromText() {
+			const type = getSpecType();
 			const textarea = document.getElementById('peakTextArea');
 			const lines = textarea.value.trim().split('\n');
 			const newPeaks = [];
+
+			const vectorSize = type === 'nmr' ? 1500 : 1000;
+
 			for (let i = 0; i < lines.length; i++) {
 				const line = lines[i].trim();
-				if (line === '') {
-					continue;
-				}
+				if (line === '') continue;
 
 				const parts = line.split(' ');
-				if (parts.length !== 2) {
+				if (parts.length < 1 || parts.length > 2) {
 					alert(`Line ${i + 1} is invalid: "${line}"`);
 					return;
 				}
 
 				const mz = Math.floor(parseFloat(parts[0]) + 0.5);
-				const intensity = parseInt(parts[1]);
-				if (isNaN(mz) || isNaN(intensity) || mz < 0 || mz > 999 || intensity < 0 || intensity > 999) {
+				const intensity = type === 'nmr' ? 1 : parseInt(parts[1]);
+				if (isNaN(mz) || mz < 0 || mz >= vectorSize || isNaN(intensity) || intensity < 0 || intensity > 999) {
 					alert(`Line ${i + 1} has invalid values: "${line}"`);
 					return;
 				}
@@ -155,19 +186,23 @@
 		}
 
 		function submitData() {
-			updateFromText()
+			updateFromText();
 			if (peaks.length === 0) {
 				alert("Please add at least one peak before generating.");
 				return;
 			}
 
-			const data = Array(1000).fill(0);
+			const selectedType = document.querySelector('input[name="specType"]:checked').value;
+			const vectorSize = selectedType === 'nmr' ? 1500 : 1000;
+			const data = Array(vectorSize).fill(0);
 			peaks.forEach(({ mz, intensity }) => {
-				data[mz] = intensity;
+				if (mz < vectorSize) {
+					data[mz] = intensity;
+				}
 			});
 
 			const rawText = data.join(",");
-			fetch('/api/mass', {
+			fetch(`/api/${selectedType}`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'text/plain' },
 				body: rawText
@@ -185,6 +220,10 @@
 				alert("Generate failed: " + err.message);
 			});
 		}
+
+		document.querySelectorAll('input[name="specType"]').forEach(radio => {
+			radio.addEventListener('change', updatePlaceholders);
+		});
 	</script>
 </body>
 </html>

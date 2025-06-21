@@ -45,3 +45,50 @@ extern int8_t database_external_massbank_migration(const char *name) {
 	log_info("massbank spectrum migration success");
 	return 0;
 }
+
+extern int8_t database_external_nmrshiftdb_migration(const char *name) {
+	FILE *fptr = fopen(name, "r");
+	if (!fptr) {
+		log_error("failed to open nmrshiftdb spectrum");
+		return -1;
+	}
+
+	char nmrshiftdb_line[EXTERNAL_GENERAL_MAX];
+	char mol_name[EXTERNAL_NAME_MAX];
+	char mol_inchi[EXTERNAL_INCHI_MAX];
+	float mol_peaks_data[SPECTRUM_NMR_BIN];
+	float data_ppm = 0;
+	int32_t data_ofs = 0;
+	int32_t data_resolution = 100;
+	while (fgets(nmrshiftdb_line, sizeof(nmrshiftdb_line), fptr)) {
+		if (strncmp(nmrshiftdb_line, "$$$$", 4) == 0) {
+			fgets(nmrshiftdb_line, sizeof(nmrshiftdb_line), fptr);
+			sscanf(nmrshiftdb_line, " %[^\r\n]", mol_name);
+			memset(mol_inchi, 0, sizeof(mol_inchi));
+			memset(mol_peaks_data, 0, sizeof(mol_peaks_data));
+			data_ofs = 0;
+		} else if (strncmp(nmrshiftdb_line, "> <INChI>", 9) == 0) {
+			fgets(nmrshiftdb_line, sizeof(nmrshiftdb_line), fptr);
+			sscanf(nmrshiftdb_line, "%[^\r\n]", mol_inchi);
+		} else if (strncmp(nmrshiftdb_line, "> <Spectrum 1H 1>", 17) == 0) {
+			fgets(nmrshiftdb_line, sizeof(nmrshiftdb_line), fptr);
+			char *nmrshiftdb_token = strtok(nmrshiftdb_line, "|");
+			while (nmrshiftdb_token != NULL) {
+				sscanf(nmrshiftdb_token, "%f;%*s", &data_ppm);
+				if ((int32_t)(data_ppm * 100 + 0.5) < 0) {
+					data_ofs = (int32_t)(data_ppm * data_resolution + 0.5);
+				}
+
+				mol_peaks_data[(int32_t)(data_ppm * data_resolution + 0.5) - data_ofs] = 1;
+				nmrshiftdb_token = strtok(NULL, "|");
+			}
+
+			database_spectrum_insert_nmr(mol_name, mol_inchi, mol_peaks_data, SPECTRUM_NMR_BIN);
+			continue;
+		}
+	}
+
+	fclose(fptr);
+	log_info("nmrshiftdb spectrum migration success");
+	return 0;
+}
