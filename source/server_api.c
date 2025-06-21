@@ -48,6 +48,42 @@ static char *server_api_request_mass(struct MHD_Post *post) {
 	return NULL;
 }
 
+static char *server_api_request_nmr(struct MHD_Post *post) {
+	char *name[EXTERNAL_NAME_MAX];
+	char *inchi[EXTERNAL_INCHI_MAX];
+	float peaks_data[SPECTRUM_NMR_BIN];
+	if (post->data) {
+		const char *post_data = post->data;
+		char *post_ptr = post->data;
+		for (int32_t i = 0; i < SPECTRUM_NMR_BIN; ++i) {
+			while (isspace((unsigned char)*post_data) || *post_data == ',') {
+				if (*post_data == '\0') {
+					log_error("failed to receive nmr spectrum");
+					return NULL;
+				}
+
+				post_data++;
+			}
+
+			float peak_intensity = strtof(post_data, &post_ptr);
+			if (post_data == post_ptr) {
+				log_error("failed to parse nmr spectrum");
+				return NULL;
+			}
+
+			peaks_data[i] = peak_intensity;
+			post_data = post_ptr;
+		}
+
+		if (database_spectrum_select_nmr(name, inchi, peaks_data, EXTERNAL_NAME_MAX, EXTERNAL_INCHI_MAX, SPECTRUM_NMR_BIN) > 0) {
+			return mol_create((const char *)name, (const char *)inchi);
+		}
+	}
+
+	log_critical("invalid nmr spectrum");
+	return NULL;
+}
+
 static int32_t server_api_request_handler(
     void *cls,
     struct MHD_Connection *connection,
@@ -115,6 +151,35 @@ static int32_t server_api_request_handler(
 					free(con_post->data);
 					free(con_post);
 					free(mass_mol);
+					return ret;
+				}
+			} else if (strncmp(url, "/nmr", 4) == 0) {
+				char *nmr_mol = server_api_request_nmr(con_post);
+				if (!nmr_mol) {
+					struct MHD_Response *response =
+					    MHD_create_response_from_buffer(
+						0,
+						NULL,
+						MHD_RESPMEM_PERSISTENT);
+
+					int32_t ret = MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, response);
+					MHD_destroy_response(response);
+					free(con_post->data);
+					free(con_post);
+					log_error("failed to create molecular structure from nmr spectrum");
+					return ret;
+				} else {
+					struct MHD_Response *response =
+					    MHD_create_response_from_buffer(
+						strlen(nmr_mol),
+						(void *)nmr_mol,
+						MHD_RESPMEM_MUST_COPY);
+
+					int32_t ret = MHD_queue_response(connection, MHD_HTTP_OK, response);
+					MHD_destroy_response(response);
+					free(con_post->data);
+					free(con_post);
+					free(nmr_mol);
 					return ret;
 				}
 			} else {
