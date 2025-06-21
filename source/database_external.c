@@ -53,8 +53,6 @@ extern int8_t database_external_nmrshiftdb_migration(const char *name) {
 		return -1;
 	}
 
-	char *nmrshiftdb_token = NULL;
-	char *data_token = NULL;
 	char nmrshiftdb_line[EXTERNAL_GENERAL_MAX];
 	char mol_name[EXTERNAL_NAME_MAX];
 	char mol_inchi[EXTERNAL_INCHI_MAX];
@@ -68,21 +66,20 @@ extern int8_t database_external_nmrshiftdb_migration(const char *name) {
 			sscanf(nmrshiftdb_line, " %[^\r\n]", mol_name);
 			memset(mol_inchi, 0, sizeof(mol_inchi));
 			memset(mol_peaks_data, 0, sizeof(mol_peaks_data));
+			data_ofs = 0;
 		} else if (strncmp(nmrshiftdb_line, "> <INChI>", 9) == 0) {
 			fgets(nmrshiftdb_line, sizeof(nmrshiftdb_line), fptr);
 			sscanf(nmrshiftdb_line, "%[^\r\n]", mol_inchi);
 		} else if (strncmp(nmrshiftdb_line, "> <Spectrum 1H 1>", 17) == 0) {
 			fgets(nmrshiftdb_line, sizeof(nmrshiftdb_line), fptr);
-			nmrshiftdb_token = strtok(nmrshiftdb_line, "|");
+			char *nmrshiftdb_token = strtok(nmrshiftdb_line, "|");
 			while (nmrshiftdb_token != NULL) {
-				data_token = strtok(nmrshiftdb_token, ";");
-				data_ppm = atof(data_token);
+				sscanf(nmrshiftdb_token, "%f;%*s", &data_ppm);
 				if ((int32_t)(data_ppm * 100 + 0.5) < 0) {
 					data_ofs = (int32_t)(data_ppm * data_resolution + 0.5);
 				}
 
 				mol_peaks_data[(int32_t)(data_ppm * data_resolution + 0.5) - data_ofs] = 1;
-				data_token = strtok(NULL, "|");
 				nmrshiftdb_token = strtok(NULL, "|");
 			}
 
