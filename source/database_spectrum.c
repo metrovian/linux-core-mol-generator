@@ -321,3 +321,54 @@ extern float database_spectrum_select_mass(char *name, char *inchi, float *peaks
 	log_info("mass specturm select success (%s, %s, %.03f%%)", name, mol_hash(inchi), similarity * 100);
 	return similarity;
 }
+
+extern float database_spectrum_select_nmr(char *name, char *inchi, float *peaks_data, int32_t name_size, int32_t inchi_size, int32_t peaks_number) {
+	char molecule_vector[4096];
+	char *ptr_vector = molecule_vector;
+	ptr_vector += sprintf(ptr_vector, "[");
+	for (int32_t i = 0; i < peaks_number; i++) {
+		ptr_vector += sprintf(ptr_vector, "%.0f", peaks_data[i]);
+		if (i < peaks_number - 1) {
+			ptr_vector += sprintf(ptr_vector, ",");
+		}
+	}
+
+	sprintf(ptr_vector, "]");
+	const char *param_query[1] = {molecule_vector};
+	PGresult *result_query = PQexecParams(
+	    database_spectrum,
+	    "SELECT molecule.name, molecule.inchi, (nmr_spectrum.spectrum_vector <-> $1) AS distance "
+	    "FROM nmr_spectrum "
+	    "JOIN molecule ON nmr_spectrum.molecule_id = molecule.id "
+	    "ORDER BY nmr_spectrum.spectrum_vector <-> $1 "
+	    "LIMIT 1",
+	    1,
+	    NULL,
+	    param_query,
+	    NULL,
+	    NULL,
+	    0);
+
+	if (PQresultStatus(result_query) != PGRES_TUPLES_OK) {
+		PQclear(result_query);
+		log_error("failed to select nmr spectrum");
+		return -1;
+	}
+
+	if (PQntuples(result_query) < 1) {
+		PQclear(result_query);
+		log_error("failed to select nmr spectrum");
+		return -1;
+	}
+
+	const char *result_name = PQgetvalue(result_query, 0, 0);
+	const char *result_inchi = PQgetvalue(result_query, 0, 1);
+	const char *result_similarity = PQgetvalue(result_query, 0, 2);
+	snprintf(name, name_size, "%s", result_name);
+	snprintf(inchi, inchi_size, "%s", result_inchi);
+	float distance = strtof(result_similarity, NULL);
+	float similarity = 1.0 / (1.0 + distance);
+	PQclear(result_query);
+	log_info("nmr specturm select success (%s, %s, %.03f%%)", name, mol_hash(inchi), similarity * 100);
+	return similarity;
+}
