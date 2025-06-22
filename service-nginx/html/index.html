@@ -45,6 +45,7 @@
 		input[type="number"] {
 			width: 115px;
 			padding: 6px;
+			font-family: 'Courier New', Courier, monospace;
 			font-size: 13px;
 		}
 		button {
@@ -85,84 +86,96 @@
 		<div class="radio-group">
 			<label><input type="radio" name="specType" value="mass" checked> mass</label>
 			<label><input type="radio" name="specType" value="nmr"> nmr</label>
-			<label><input type="radio" name="specType" value="optics" disabled> optics (coming soon)</label>
+			<label><input type="radio" name="specType" value="optics"> optics</label>
 		</div>
 		<div class="input-row">
-			<input type="number" id="mzInput" placeholder="m/z (0-999)" min="0" max="999">
-			<input type="number" id="intensityInput" placeholder="intensity (0-999)" min="0" max="999">
+			<input type="number" id="xInput" placeholder="(0-1000)" min="0" max="999">
+			<input type="number" id="yInput" placeholder="(0-1000)" min="0" max="999">
 			<button onclick="addPeak()">add</button>
 			<button onclick="submitData()">generate</button>
 		</div>
-		<textarea id="peakTextArea" placeholder="m/z intensity"></textarea>
+		<textarea id="peakTextArea" placeholder="x-input y-input"></textarea>
 	</div>
 	<script>
+		const CONFIG_SPECTRUM = {
+			mass: {
+				placeholderX: "(0-1000)",
+				placeholderY: "(0-1000)",
+				vectorSize: 1000,
+				yFixed: false,
+				validate: (x, y) => x >= 0 && x < 1000 && y >= 0 && y <= 999
+			},
+			nmr: {
+				placeholderX: "(0-1500)",
+				placeholderY: "(1)",
+				vectorSize: 1500,
+				yFixed: true,
+				validate: (x, y) => x >= 0 && x < 1500
+			},
+			optics: {
+				placeholderX: "(0-2000)",
+				placeholderY: "(0-1000)",
+				vectorSize: 2000,
+				yFixed: false,
+				validate: (x, y) => x >= 0 && x < 2000 && y >= 0 && y <= 999
+			}
+		};
+
 		let peaks = [];
 
 		function getSpecType() {
 			return document.querySelector('input[name="specType"]:checked').value;
 		}
 
-		function updatePlaceholders() {
-			const mzInput = document.getElementById('mzInput');
-			const intensityInput = document.getElementById('intensityInput');
-			const type = getSpecType();
+		function getSpecConfig() {
+			return CONFIG_SPECTRUM[getSpecType()];
+		}
 
-			if (type === 'nmr') {
-				mzInput.placeholder = "ppm (0-1499)";
-				intensityInput.placeholder = "intensity (1)";
-				intensityInput.disabled = true;
-			} else {
-				mzInput.placeholder = "m/z (0-999)";
-				intensityInput.placeholder = "intensity (0-999)";
-				intensityInput.disabled = false;
-			}
+		function updatePlaceholders() {
+			const { placeholderX, placeholderY, yFixed } = getSpecConfig();
+			const xInput = document.getElementById('xInput');
+			const yInput = document.getElementById('yInput');
+			xInput.placeholder = placeholderX;
+			yInput.placeholder = placeholderY;
+			yInput.disabled = yFixed;
 		}
 
 		function addPeak() {
-			const type = getSpecType();
-			const mz = parseInt(document.getElementById('mzInput').value);
-			let intensity = parseInt(document.getElementById('intensityInput').value);
-			const vectorSize = type === 'nmr' ? 1500 : 1000;
-			if (isNaN(mz) || mz < 0 || mz >= vectorSize) {
-				alert(`Please enter valid ${type === 'nmr' ? 'ppm (0-1499)' : 'm/z (0-999)'}.`);
+			const { yFixed, vectorSize, validate } = getSpecConfig();
+			const x = parseInt(document.getElementById('xInput').value);
+			let y = yFixed ? 1 : parseInt(document.getElementById('yInput').value);
+			if (!validate(x, y)) {
+				alert("Invalid values. Please check input range.");
 				return;
 			}
 
-			if (type === 'nmr') {
-				intensity = 1;
-			} else if (isNaN(intensity) || intensity < 0 || intensity > 999) {
-				alert("Please enter valid intensity (0-999).");
-				return;
-			}
-
-			peaks.push({ mz, intensity });
+			peaks.push({ x, y });
 			sortPeaks();
 			updateTextArea();
-			document.getElementById('mzInput').value = '';
-			document.getElementById('intensityInput').value = '';
+			document.getElementById('xInput').value = '';
+			document.getElementById('yInput').value = '';
 		}
 
 		function sortPeaks() {
-			peaks.sort((a, b) => a.mz - b.mz);
+			peaks.sort((a, b) => a.x - b.x);
 		}
 
 		function updateTextArea() {
 			const textarea = document.getElementById('peakTextArea');
-			const lines = peaks.map(p => `${Math.floor(p.mz + 0.5)} ${p.intensity}`);
+			const lines = peaks.map(p => `${Math.floor(p.x + 0.5)} ${p.y}`);
 			textarea.value = lines.join('\n');
 		}
 
 		function updateFromText() {
-			const type = getSpecType();
+			const { yFixed, vectorSize, validate } = getSpecConfig();
 			const textarea = document.getElementById('peakTextArea');
 			const lines = textarea.value.trim().split('\n');
 			const newPeaks = [];
-
-			const vectorSize = type === 'nmr' ? 1500 : 1000;
-
 			for (let i = 0; i < lines.length; i++) {
 				const line = lines[i].trim();
-				if (line === '') continue;
+				if (line === '') {
+					continue;
+				}
 
 				const parts = line.split(' ');
 				if (parts.length < 1 || parts.length > 2) {
@@ -170,16 +183,16 @@
 					return;
 				}
 
-				const mz = Math.floor(parseFloat(parts[0]) + 0.5);
-				const intensity = type === 'nmr' ? 1 : parseInt(parts[1]);
-				if (isNaN(mz) || mz < 0 || mz >= vectorSize || isNaN(intensity) || intensity < 0 || intensity > 999) {
+				const x = Math.floor(parseFloat(parts[0]) + 0.5);
+				const y = yFixed ? 1 : parseInt(parts[1]);
+				if (!validate(x, y)) {
 					alert(`Line ${i + 1} has invalid values: "${line}"`);
 					return;
 				}
 
-				newPeaks.push({ mz, intensity });
+				newPeaks.push({ x, y });
 			}
-
+			
 			peaks = newPeaks;
 			sortPeaks();
 			updateTextArea();
@@ -192,12 +205,12 @@
 				return;
 			}
 
-			const selectedType = document.querySelector('input[name="specType"]:checked').value;
-			const vectorSize = selectedType === 'nmr' ? 1500 : 1000;
+			const selectedType = getSpecType();
+			const { vectorSize } = getSpecConfig();
 			const data = Array(vectorSize).fill(0);
-			peaks.forEach(({ mz, intensity }) => {
-				if (mz < vectorSize) {
-					data[mz] = intensity;
+			peaks.forEach(({ x, y }) => {
+				if (x < vectorSize) {
+					data[x] = y;
 				}
 			});
 
