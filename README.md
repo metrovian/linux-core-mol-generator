@@ -3,7 +3,7 @@ Personal application software to understand database searching in depth.
 <br/></br>
 ## Features ##
 - Material spectrum similarity serach
-- Material spectrum database migration
+- Material spectrum external database migration
 <br/></br>
 ## Hardwares ##
 - Fourier-transform infrared spectrometer ( FT-IR )
