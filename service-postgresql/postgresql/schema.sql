@@ -21,3 +21,10 @@ CREATE TABLE nmr_spectrum (
     spectrum_vector vector(1500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
+
+CREATE TABLE optics_spectrum (
+    id SERIAL PRIMARY KEY,
+    molecule_id INTEGER REFERENCES molecule(id),
+    spectrum_vector vector(4000),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
