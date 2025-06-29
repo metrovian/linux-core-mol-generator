@@ -1,6 +1,6 @@
 CC := gcc
 CFLAGS := -Iinclude -Wall -Wno-pointer-sign -Wno-incompatible-pointer-types
-LDFLAGS := -lcurl -lmicrohttpd -lopenbabel -lpq -lspdlog -lfmt -lm -pthread
+LDFLAGS := -ljansson -lmicrohttpd -lopenbabel -lpq -lspdlog -lfmt -lm -pthread
 
 CXX := g++
 CXXFLAGS := -Iinclude -I/usr/include/openbabel3 -Wall -Wno-deprecated-declarations
