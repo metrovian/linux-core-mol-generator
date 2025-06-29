@@ -174,7 +174,7 @@ extern int8_t database_external_chemotion_migration(const char *name) {
 									mol_peaks_data[data_wavelength] = 3;
 								} else if (strncmp(data_intensity, "s", 1)) {
 									mol_peaks_data[data_wavelength] = 4;
-								} else if (strncmp(data_intensity, "vs", 1)) {
+								} else if (strncmp(data_intensity, "vs", 2)) {
 									mol_peaks_data[data_wavelength] = 5;
 								} else {
 									pclose(chromium_ptr);

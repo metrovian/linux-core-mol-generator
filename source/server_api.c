@@ -84,6 +84,42 @@ static char *server_api_request_nmr(struct MHD_Post *post) {
 	return NULL;
 }
 
+static char *server_api_request_optics(struct MHD_Post *post) {
+	char *name[EXTERNAL_NAME_MAX];
+	char *inchi[EXTERNAL_INCHI_MAX];
+	float peaks_data[SPECTRUM_OPTICS_BIN];
+	if (post->data) {
+		const char *post_data = post->data;
+		char *post_ptr = post->data;
+		for (int32_t i = 0; i < SPECTRUM_OPTICS_BIN; ++i) {
+			while (isspace((unsigned char)*post_data) || *post_data == ',') {
+				if (*post_data == '\0') {
+					log_error("failed to receive optics spectrum");
+					return NULL;
+				}
+
+				post_data++;
+			}
+
+			float peak_intensity = strtof(post_data, &post_ptr);
+			if (post_data == post_ptr) {
+				log_error("failed to parse optics spectrum");
+				return NULL;
+			}
+
+			peaks_data[i] = peak_intensity;
+			post_data = post_ptr;
+		}
+
+		if (database_spectrum_select_optics(name, inchi, peaks_data, EXTERNAL_NAME_MAX, EXTERNAL_INCHI_MAX, SPECTRUM_OPTICS_BIN) > 0) {
+			return mol_create((const char *)name, (const char *)inchi);
+		}
+	}
+
+	log_critical("invalid optics spectrum");
+	return NULL;
+}
+
 static int32_t server_api_request_handler(
     void *cls,
     struct MHD_Connection *connection,
@@ -180,6 +216,35 @@ static int32_t server_api_request_handler(
 					free(con_post->data);
 					free(con_post);
 					free(nmr_mol);
+					return ret;
+				}
+			} else if (strncmp(url, "/optics", 7) == 0) {
+				char *optics_mol = server_api_request_optics(con_post);
+				if (!optics_mol) {
+					struct MHD_Response *response =
+					    MHD_create_response_from_buffer(
+						0,
+						NULL,
+						MHD_RESPMEM_PERSISTENT);
+
+					int32_t ret = MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, response);
+					MHD_destroy_response(response);
+					free(con_post->data);
+					free(con_post);
+					log_error("failed to create molecular structure from optics spectrum");
+					return ret;
+				} else {
+					struct MHD_Response *response =
+					    MHD_create_response_from_buffer(
+						strlen(optics_mol),
+						(void *)optics_mol,
+						MHD_RESPMEM_MUST_COPY);
+
+					int32_t ret = MHD_queue_response(connection, MHD_HTTP_OK, response);
+					MHD_destroy_response(response);
+					free(con_post->data);
+					free(con_post);
+					free(optics_mol);
 					return ret;
 				}
 			} else {

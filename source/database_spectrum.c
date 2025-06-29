@@ -522,7 +522,7 @@ extern float database_spectrum_select_optics(char *name, char *inchi, float *pea
 	snprintf(name, name_size, "%s", result_name);
 	snprintf(inchi, inchi_size, "%s", result_inchi);
 	float distance = strtof(result_similarity, NULL);
-	float similarity = 1.0 / (1.0 + distance);
+	float similarity = 1.0 / (1.0 + distance / 5.0);
 	PQclear(result_query);
 	log_info("optics specturm select success (%s, %s, %.03f%%)", name, mol_hash(inchi), similarity * 100);
 	return similarity;
