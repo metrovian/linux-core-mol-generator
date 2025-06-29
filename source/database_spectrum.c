@@ -325,7 +325,7 @@ extern int8_t database_spectrum_insert_optics(const char *name, const char *inch
 	}
 
 	char molecule_id[32];
-	char molecule_vector[4096];
+	char molecule_vector[8192];
 	char *ptr_vector = molecule_vector;
 	snprintf(molecule_id, sizeof(molecule_id), "%d", atoi(PQgetvalue(result_query, 0, 0)));
 	ptr_vector += sprintf(ptr_vector, "[");
@@ -354,6 +354,7 @@ extern int8_t database_spectrum_insert_optics(const char *name, const char *inch
 		0);
 
 	if (PQresultStatus(result_query) != PGRES_COMMAND_OK) {
+		log_error("%s", PQerrorMessage(result_query));
 		PQclear(result_query);
 		PQexec(database_spectrum, "ROLLBACK");
 		log_error("failed to insert optics spectrum (%s, %s)", name, mol_hash(inchi));
@@ -477,7 +478,7 @@ extern float database_spectrum_select_nmr(char *name, char *inchi, float *peaks_
 }
 
 extern float database_spectrum_select_optics(char *name, char *inchi, float *peaks_data, int32_t name_size, int32_t inchi_size, int32_t peaks_number) {
-	char molecule_vector[4096];
+	char molecule_vector[8192];
 	char *ptr_vector = molecule_vector;
 	ptr_vector += sprintf(ptr_vector, "[");
 	for (int32_t i = 0; i < peaks_number; i++) {
