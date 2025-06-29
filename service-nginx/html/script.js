@@ -4,7 +4,7 @@ const CONFIG_SPECTRUM = {
 		placeholderY: "(0-1000)",
 		vectorSize: 1000,
 		yFixed: false,
-		validate: (x, y) => x >= 0 && x < 1000 && y >= 0 && y <= 999
+		validate: (x, y) => x >= 0 && x < 1000 && y >= 0 && y < 1000
 	},
 	nmr: {
 		placeholderX: "(0-1500)",
@@ -14,11 +14,11 @@ const CONFIG_SPECTRUM = {
 		validate: (x, y) => x >= 0 && x < 1500
 	},
 	optics: {
-		placeholderX: "(0-2000)",
-		placeholderY: "(0-1000)",
-		vectorSize: 2000,
+		placeholderX: "(0-4000)",
+		placeholderY: "(0-5)",
+		vectorSize: 4000,
 		yFixed: false,
-		validate: (x, y) => x >= 0 && x < 2000 && y >= 0 && y <= 999
+		validate: (x, y) => x >= 0 && x < 4000 && y >= 0 && y <= 5
 	}
 };
 
