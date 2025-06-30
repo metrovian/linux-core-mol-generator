@@ -9,7 +9,6 @@ Personal application software to understand database searching in depth.
 - Fourier-transform infrared spectrometer ( FT-IR )
 - Nuclear magnetic resonance spectrometer ( 1H-NMR )
 - Mass spectrometer ( GC-MS )
-- Fluorescence spectrometer ( VIS-FS )
 
 <br/></br>
 Copyright (c) 2025 metrovian [ MIT LICENSE ]
