@@ -8,7 +8,8 @@ Personal application software to understand database searching in depth.
 ## Hardwares ##
 - Fourier-transform infrared spectrometer ( FT-IR )
 - Nuclear magnetic resonance spectrometer ( 1H-NMR )
-- Mass spectrometer ( GC-MS )
+- Single mass spectrometer ( GC-MS )
+- Tandem mass spectrometer ( LC-MS2 )
 
 <br/></br>
 Copyright (c) 2025 metrovian [ MIT LICENSE ]
