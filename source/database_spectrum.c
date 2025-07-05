@@ -375,6 +375,66 @@ extern int8_t database_spectrum_insert_optics(const char *name, const char *inch
 	return 0;
 }
 
+extern float database_spectrum_select_molecule(char *name, char *inchi, int32_t name_size, int32_t inchi_size) {
+	static int32_t cursor_query = 0;
+	static int32_t count_query = 0;
+	static int32_t total_query = 0;
+	PGresult *result_query;
+	if (!cursor_query) {
+		result_query = PQexec(database_spectrum, "SELECT COUNT(*) FROM molecule");
+		if (PQresultStatus(result_query) != PGRES_TUPLES_OK) {
+			PQclear(result_query);
+			log_error("failed to count molecules");
+			return -1;
+		}
+
+		total_query = atoi(PQgetvalue(result_query, 0, 0));
+		PQclear(result_query);
+		result_query = PQexec(database_spectrum, "BEGIN");
+		if (PQresultStatus(result_query) != PGRES_COMMAND_OK) {
+			PQclear(result_query);
+			log_error("failed to begin transaction");
+			return -1;
+		}
+
+		PQclear(result_query);
+		result_query = PQexec(database_spectrum, "DECLARE molcursor CURSOR FOR SELECT name, inchi FROM molecule");
+		if (PQresultStatus(result_query) != PGRES_COMMAND_OK) {
+			PQclear(result_query);
+			log_error("failed to select next molecule");
+			return -1;
+		}
+
+		PQclear(result_query);
+		cursor_query = 1;
+	}
+
+	result_query = PQexec(database_spectrum, "FETCH NEXT FROM molcursor");
+	if (PQresultStatus(result_query) != PGRES_TUPLES_OK) {
+		PQclear(result_query);
+		log_error("failed to fetch next molecule");
+		return -1;
+	}
+
+	int32_t nrows = PQntuples(result_query);
+	if (!nrows) {
+		cursor_query = 0;
+		count_query = 0;
+		PQclear(result_query);
+		PQexec(database_spectrum, "CLOSE molcursor");
+		PQexec(database_spectrum, "END");
+		return 0;
+	}
+
+	const char *result_name = PQgetvalue(result_query, 0, 0);
+	const char *result_inchi = PQgetvalue(result_query, 0, 1);
+	snprintf(name, name_size, "%s", result_name);
+	snprintf(inchi, inchi_size, "%s", result_inchi);
+	PQclear(result_query);
+	log_info("molecule select success (%s, %s, %.3lf%%)", name, mol_hash(inchi), 100.000 * (float)(++count_query) / (float)total_query);
+	return (float)count_query / (float)total_query;
+}
+
 extern float database_spectrum_select_mass(char *name, char *inchi, float *peaks_data, int32_t name_size, int32_t inchi_size, int32_t peaks_number) {
 	char molecule_vector[4096];
 	char *ptr_vector = molecule_vector;
