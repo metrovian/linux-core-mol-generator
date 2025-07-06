@@ -18,6 +18,7 @@ int32_t main(int32_t argc, char *argv[]) {
 
 		char *mol_path = (char *)malloc(strlen(name) + 5);
 		if (!mol_path) {
+			database_spectrum_close();
 			log_error("failed to allocate export path");
 			return -1;
 		}
@@ -25,6 +26,7 @@ int32_t main(int32_t argc, char *argv[]) {
 		snprintf(mol_path, strlen(name) + 5, "%s%s", name, ".mol");
 		FILE *mol_fptr = fopen(mol_path, "w");
 		if (!mol_fptr) {
+			database_spectrum_close();
 			log_error("failed to open molfile");
 			return -1;
 		}
@@ -35,6 +37,8 @@ int32_t main(int32_t argc, char *argv[]) {
 		free(mol_path);
 	}
 
+	system("tar -czf molfiles.tar.gz *.mol");
+	system("rm -f *.mol");
 	database_spectrum_close();
 	return 0;
 }
