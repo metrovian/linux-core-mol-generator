@@ -1,6 +1,3 @@
-# Spectrum Comparator #
-Personal application software to understand database searching in depth.
-<br/></br>
 ## Features ##
 - Material spectrum similarity serach
 - Material spectrum external database migration
