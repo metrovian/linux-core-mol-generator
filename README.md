@@ -1,4 +1,4 @@
-# Mol Generator #
+# Peak Comparator #
 Personal application software to understand database searching in depth.
 <br/></br>
 ## Features ##
