@@ -23,7 +23,22 @@ int32_t main(int32_t argc, char *argv[]) {
 			return -1;
 		}
 
+		int32_t i = 0;
+		int32_t j = 0;
 		snprintf(mol_path, strlen(name) + 5, "%s%s", name, ".mol");
+		for (i = 0; i < strlen(name) + 5; ++i) {
+			if (mol_path[i] == '/' || mol_path[i] == ' ') {
+				log_debug("path trim success");
+				continue;
+			} else if (mol_path[i] == '\0') {
+				log_debug("path trim terminated");
+				break;
+			}
+
+			mol_path[j++] = mol_path[i];
+		}
+
+		mol_path[j] = '\0';
 		FILE *mol_fptr = fopen(mol_path, "w");
 		if (!mol_fptr) {
 			database_spectrum_close();
