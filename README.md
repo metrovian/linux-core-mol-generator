@@ -8,5 +8,5 @@
 - Unit mass spectrometer ( GC-MS )
 - Hybrid mass spectrometer ( LC-MS2 )
 
-<br/></br>
+<br/></br> 
 Copyright (c) 2025 metrovian [ MIT LICENSE ]
